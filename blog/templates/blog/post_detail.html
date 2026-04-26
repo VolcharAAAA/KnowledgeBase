@@ -1,0 +1,29 @@
+{% extends "blog/base.html"%}
+{% block title %}{{ post.title }} -- Блог {% endblock %}
+
+{% block content %}
+    <h2> {{ post.title }} </h2>
+    <p>
+    	<small>Создано: {{ post.created_at|date:"d.m.Y H:i" }}</small>
+    	{% if post.updated_at != post.created_at %}
+    	    <br><small>Обновлено: {{ post.updated_at|date:"d.m.Y H:i" }}</small>
+        {% endif %}
+    </p>
+    
+<p>{{ post.body }}</p>
+
+<br>
+
+<hr>
+<h>Похожие посты:</h>
+<br>
+
+{% for sim_post in similar_posts%}
+<h>{{sim_post.title}}</h>
+<a href="{% url 'post_detail' pk=sim_post.pk %}">Подробнее</a>
+<br>
+{% endfor %}
+
+<hr>
+<p><a href="{% url 'post_list' %}">← Вернуться к списку постов</a></p>
+{% endblock %}

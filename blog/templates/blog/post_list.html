@@ -1,0 +1,30 @@
+{% extends "blog/base.html" %}
+{% block title %}Блог по Django{% endblock %}
+{% block content %}
+<h2>Блог | Ерошенко Д-Э 311</h2>
+{% if posts %}
+<ul>
+    {% for post in posts %}
+    <li>
+        <strong>{{post.title}}</strong><br>
+        <small>Создано: {{post.created_at|date:"d.m.Y H:i"}}</small><br>
+        <p>{{post.body}}</p>
+        <p>{{post.author}}</p>
+        <p> 
+        <a href="{% url 'post_detail' pk=post.pk %}">Подробнее...</a> 
+        </p>
+    </li>
+    {% endfor %}
+    </ul>
+    {% else %}
+        <p>Пока нет опубликованных постов.</p>
+    {% endif %}
+    <!--
+    <li>Пост 1: Знакомство с курсом</li>
+    <li>Пост 2: Как устроен наш учебный сайт</li>
+    <li>Пост 3: Как сдавать практические работы</li>
+    <li>Пост 4: Набор инструментов для работы с Django</li>
+    <li>Пост 5: Урок 1 Знакомство с Django</li>
+    <li>Пост 6: Урок 2 Первый сайт</li>
+    -->
+{% endblock %}
