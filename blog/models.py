@@ -10,3 +10,17 @@ class Post(models.Model):
     
     def __str__(self):
         return self.title
+
+class Comment(models.Model):
+    post = models.ForeignKey(
+        Post, 
+        on_delete=models.CASCADE, 
+        related_name="comments", 
+        verbose_name="Пост", 
+    )
+    author = models.CharField("Автор", max_length=100)
+    txt = models.TextField("Текс комментария")
+    created_at = models.DateTimeField("Создано", auto_now_add=True) 
+
+    def __str__(self):
+        return f"Комментарий от {self.author}"

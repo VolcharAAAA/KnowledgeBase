@@ -10,17 +10,36 @@
         {% endif %}
     </p>
 <p>{{ post.body }}</p>
+<p>Автор: {{post.author}}</p>
 
 <p><a href="{% url 'post_edit' pk=post.pk %}">Редактировать пост</a></p>
 <p><a href="{% url 'post_delete' pk=post.pk %}">УДАЛИТЬ пост</a></p>
 <p><a href="{% url 'post_list' %}">← Вернуться к списку постов</a></p>
+
+<h3>Комментарии: ({{ comments.count }} шт.)</h3>
+
+{% if comments %}
+    <ul>
+        {% for comment in comments %}
+        <li>
+            <strong>{{comment.author}}</strong>
+            <small>{{comment.created_at|date:"d.m.Y H:i"}}</small><br>
+            <p>{{comment.txt}}</p>
+        </li>
+        {% endfor %}
+    </ul>
+
+{% else %}
+    <p>Пока не комментариев. Станьте первым!</p>
+{% endif %}
+
 <hr>
 <h>Похожие посты:</h>
 <br>
-
 {% for sim_post in similar_posts%}
 <h>{{sim_post.title}}</h>
 <a href="{% url 'post_detail' pk=sim_post.pk %}">Подробнее</a>
+<br>
 {% endfor %}
 
 {% endblock %}

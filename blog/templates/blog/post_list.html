@@ -12,7 +12,8 @@
         <strong>{{post.title}}</strong><br>
         <small>Создано: {{post.created_at|date:"d.m.Y H:i"}}</small><br>
         <p>{{post.body}}</p>
-        <p>{{post.author}}</p>
+        <p>Автор: {{post.author}}</p>
+        <p>Комментарии: {{post.comments.count}} шт.</p>
         <p> 
         <a href="{% url 'post_detail' pk=post.pk %}">Подробнее...</a> 
         </p>
@@ -22,12 +23,5 @@
     {% else %}
         <p>Пока нет опубликованных постов.</p>
     {% endif %}
-    <!--
-    <li>Пост 1: Знакомство с курсом</li>
-    <li>Пост 2: Как устроен наш учебный сайт</li>
-    <li>Пост 3: Как сдавать практические работы</li>
-    <li>Пост 4: Набор инструментов для работы с Django</li>
-    <li>Пост 5: Урок 1 Знакомство с Django</li>
-    <li>Пост 6: Урок 2 Первый сайт</li>
-    -->
+
 {% endblock %}

@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from .models import Post
-from .forms import PostForm
+from .models import Post, Comment
+from .forms import PostForm, CommentForm
 from django.shortcuts import render, get_object_or_404, redirect
 
 def post_list(request):
@@ -23,9 +23,29 @@ def contacts(request):
     
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk, is_published=True)
+    comments = post.comments.all().order_by("-created_at")
     similar_posts = Post.objects.filter( created_at__date = post.created_at.date()).exclude(pk=post.pk)[:3]
-    context = {"post": post, "similar_posts": similar_posts}
-    return render(request, "blog/post_detail.html", context)
+
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False) # привязывает комментарий к текущему посту
+            comment.post = post #
+            comment.save()
+            return redirect("post_detail", pk=post.pk)
+    else:
+        form = CommentForm()
+        context = {
+            "post": post, 
+            "comments": comments, 
+            "form": form,
+            "similar_posts": similar_posts
+            }
+        return render(request, "blog/post_detail.html", context)
+
+    #similar_posts = Post.objects.filter( created_at__date = post.created_at.date()).exclude(pk=post.pk)[:3]
+    #context = {"post": post, "similar_posts": similar_posts}
+    #return render(request, "blog/post_detail.html", context)
 
 def post_create(request):
     if request.method =="POST":
