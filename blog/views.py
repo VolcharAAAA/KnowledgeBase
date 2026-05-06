@@ -3,11 +3,32 @@ from django.http import HttpResponse
 from .models import Post, Comment
 from .forms import PostForm, CommentForm
 from django.shortcuts import render, get_object_or_404, redirect
+from django.db.models import Q
+from django.core.paginator import Paginator 
 
 def post_list(request):
-    posts = Post.objects.filter(is_published=True).order_by("-created_at")
-    context = {"posts": posts}
+    query = request.GET.get("q","").strip()
+
+    posts_qs = Post.objects.filter(is_published=True)
+
+    if query:
+        posts_qs = posts_qs.filter(
+            Q(title__icontains=query) | Q(body__icontains=query)
+        )
+    # пагинация
+    paginator = Paginator(posts_qs, 5) # 5 постов на страницу
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+    context = {
+        "posts": page_obj, # теперь posts = текущая страница
+        "page_obj": page_obj, 
+        "query": query, 
+        }
     return render(request, "blog/post_list.html", context)
+
+    #posts = Post.objects.filter(is_published=True).order_by("-created_at")
+    #context = {"posts": posts}
+    #return render(request, "blog/post_list.html", context)
     
 def home(request):
     context = {}
