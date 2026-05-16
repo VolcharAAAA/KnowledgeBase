@@ -10,7 +10,7 @@
         {% endif %}
     </p>
 <p>{{ post.body }}</p>
-<p>Автор: {{post.author}}</p>
+<p>Автор: {{post.author.username|default:"(аноним)"}}</p>
 
 <p><a href="{% url 'post_edit' pk=post.pk %}">Редактировать пост</a></p>
 <p><a href="{% url 'post_delete' pk=post.pk %}">УДАЛИТЬ пост</a></p>
@@ -22,7 +22,14 @@
     <ul>
         {% for comment in comments %}
         <li>
-            <strong>{{comment.author}}</strong>
+            <strong>{
+                {% if comments.author %}
+                {{ comment.author.username }}
+                {% else %}
+                Гость
+                {% endif %}
+            }
+            </strong>
             <small>{{comment.created_at|date:"d.m.Y H:i"}}</small><br>
             <p>{{comment.txt}}</p>
         </li>

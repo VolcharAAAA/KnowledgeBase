@@ -5,6 +5,9 @@ from .forms import PostForm, CommentForm
 from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Q
 from django.core.paginator import Paginator 
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
 
 def post_list(request):
     query = request.GET.get("q","").strip()
@@ -68,17 +71,21 @@ def post_detail(request, pk):
     #context = {"post": post, "similar_posts": similar_posts}
     #return render(request, "blog/post_detail.html", context)
 
+@login_required
 def post_create(request):
     if request.method =="POST":
         form = PostForm(request.POST)
         if form.is_valid(): #True of false
-            post = form.save()
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
             return redirect("post_detail", pk=post.pk)   
     else:
         form = PostForm()
         context = {"form": form}
         return render(request, "blog/post_form.html", context)
 
+@login_required
 def post_edit(request, pk):
 
     post = get_object_or_404(Post, pk=pk)
@@ -93,6 +100,7 @@ def post_edit(request, pk):
         context = {"form": form, "post":post}
         return render(request, "blog/post_form_edit.html", context)
 
+@login_required
 def post_delete(request, pk):
 
     post = get_object_or_404(Post, pk=pk)
@@ -104,7 +112,14 @@ def post_delete(request, pk):
         context = {"post":post}
         return render(request, "blog/post_form_delete.html", context)
 
-
-
-
+def signup(request):
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect("post_list")
+    else:
+        form = UserCreationForm()
+    return render(request, "registration/signup.html", {"form": form})
 
