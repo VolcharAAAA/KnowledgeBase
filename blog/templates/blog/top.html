@@ -1,5 +1,6 @@
+<header>
 {% if request.user.is_authenticated %}
-<p>Привет, {{ request.user.username }}!</p>
+Привет, {{ request.user.username }}!
 <form method="post" action="{% url 'logout' %}">
     {% csrf_token %}
     <button type="submit">Выйти</button>
@@ -7,3 +8,4 @@
 {% else %}
 <a href="{% url 'login' %}">Вход</a> | <a href="{% url 'signup' %}">Регистрация</a>
 {% endif %}
+</header>

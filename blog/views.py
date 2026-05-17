@@ -112,14 +112,14 @@ def post_delete(request, pk):
         context = {"post":post}
         return render(request, "blog/post_form_delete.html", context)
 
-def signup(request):
-    if request.method == "POST":
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect("post_list")
-    else:
-        form = UserCreationForm()
-    return render(request, "registration/signup.html", {"form": form})
+#def signup(request):
+#    if request.method == "POST":
+#        form = UserCreationForm(request.POST)
+#        if form.is_valid():
+#            user = form.save()
+#            login(request, user)
+#            return redirect("post_list")
+#    else:
+#        form = UserCreationForm()
+#    return render(request, "registration/signup.html", {"form": form})
 
