@@ -7,7 +7,7 @@ from accounts.models import Profile
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(
-        user=instance, avatar="avatars/default_avatar.png" # путь относительно MEDIA_ROOT
+        user=instance, avatar="avatars/default_avatar.jpg" # путь относительно MEDIA_ROOT
         )
 
 @receiver(post_save, sender=User)
