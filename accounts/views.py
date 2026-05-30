@@ -1,7 +1,9 @@
 from django.contrib.auth import login
-#from django.contrib.auth.forms import UserCreationForm
-from django.shortcuts import render, redirect
-from .forms import SignUpForm
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.shortcuts import render, redirect, get_object_or_404
+from .forms import SignUpForm, UserUpdateForm, ProfileUpdateForm
+from .models import Profile
 
 # Create your views here.
 def signup(request):
@@ -14,4 +16,36 @@ def signup(request):
     else:
         form = SignUpForm()
         context = {"form": form}
-        return render(request, "registration/signup.html", context)
+    return render(request, "registration/signup.html", context)
+
+@login_required
+def profile_view(request, username=None):
+    if username is None:
+        user = request.user
+    else:
+        user = get_object_or_404(User, username=username)
+
+    profile, _ = Profile.objects.get_or_create(user=user)
+
+    context = {
+    "profile_user": user, 
+    "profile": profile, 
+    }
+    return render(request, "accounts/profile.html", context)
+
+@login_required
+def profile_edit(request):
+    profile, _ = Profile.objects.get_or_create(user=request.user)
+    if request.method == "POST":
+        u_form = UserUpdateForm(request.POST, instance=request.user)
+        p_form = ProfileUpdateForm(request.POST, instance=profile)
+        if u_form.is_valid() and p_form.is_valid():
+            u_form.save()
+            p_form.save()
+            return redirect("profile")
+    else:
+        u_form = UserUpdateForm(instance=request.user)
+        p_form = ProfileUpdateForm(instance=profile)
+
+    context = {"u_form": u_form, "p_form": p_form}
+    return render(request, "accounts/profile_edit.html", context)
